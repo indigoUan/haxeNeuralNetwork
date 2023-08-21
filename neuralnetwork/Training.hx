@@ -15,6 +15,7 @@ class Training {
 					}
 				}
 			}
+			child.outputActivationFunction = parent.outputActivationFunction;
 			kids.push(child);
 		}
 		return kids;

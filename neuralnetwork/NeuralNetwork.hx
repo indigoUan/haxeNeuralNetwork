@@ -58,7 +58,7 @@ class NeuralNetwork {
                     exponentiated.push(Math.exp(i));
                 }
         
-                var normalBase:Float = HaxeAiMath.arraySum(exponentiated);
+                var normalBase:Float = neuralnetwork.HaxeAiMath.arraySum(exponentiated);
                 var normalValues:Array<Float> = [];
                 
                 for (i in exponentiated) {
@@ -71,7 +71,9 @@ class NeuralNetwork {
     }
 
 	public function clone():NeuralNetwork {
-		return fromJSON(toJSON(this, ""));
+		var network:NeuralNetwork = fromJSON(toJSON(this, ""));
+		network.outputActivationFunction = outputActivationFunction;
+		return network;
 	}
 
     public static function toJSON(network:NeuralNetwork, space:String = "\t"):String {

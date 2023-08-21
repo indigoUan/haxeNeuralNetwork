@@ -1,8 +1,6 @@
 package neuralnetwork;
 
-@:allow(neuralnetwork.NeuralNetwork)
-@:allow(neuralnetwork.Training)
-private class HaxeAiMath {
+class HaxeAiMath {
     public static function dot(a:Array<Float>, b:Array<Float>):Float {
         var result:Float = 0;
 
