@@ -4,11 +4,11 @@ Once you include the library in your project, you can create a new network with
 ```haxe
   // feel free to set your own numbers and names (please for the love of god do not use these long-ass names) 
   var quantity_of_numbers_you_wanna_feed_it:Int = 2;
-  var quantity_of_neurons_per_layers:Int = 3;
   var quantity_of_layers:Int = 4;
+  var quantity_of_neurons_per_layers:Int = 3;
   var quantity_of_numbers_you_want_it_to_return:Int = 1;
 
-  var network:neuralnetwork.NeuralNetwork = new neuralnetwork.NeuralNetwork(quantity_of_numbers_you_wanna_feed_it, quantity_of_neurons_per_layers, quantity_of_layers, quantity_of_numbers_you_want_it_to_return);
+  var network:neuralnetwork.NeuralNetwork = new neuralnetwork.NeuralNetwork(quantity_of_numbers_you_wanna_feed_it, quantity_of_layers, quantity_of_neurons_per_layers, quantity_of_numbers_you_want_it_to_return);
 ```
 Then you can call `network.execute` passing a Float array of `quantity_of_numbers_you_wanna_feed_it` size and it will return a Float array of `quantity_of_numbers_you_want_it_to_return` size.
 ## Creating a Network from JSON data
