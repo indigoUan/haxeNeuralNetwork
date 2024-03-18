@@ -3,14 +3,6 @@ package neuralnetwork;
 private class LayerInstance {
 	public var neurons:Array<Neuron>;
 
-	@:arrayAccess function get(k:Int) {
-	  return neurons[k];
-	}
-	@:arrayAccess function arrayWrite(k:Int, v:Neuron):Neuron {
-		neurons[k] = v;
-		return v;
-	}
-
 	public function new(inputSize:Int, neuronCount:Int) {
 		neurons = new Array<Neuron>();
 		for (i in 0...neuronCount) {

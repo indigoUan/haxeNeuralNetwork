@@ -10,14 +10,6 @@ private class NeuralNetworkInstance {
 	public var layers:Array<Layer>;
 	private var givenLayerSizes:Array<Int> = new Array();
 
-	@:arrayAccess function get(k:Int) {
-	  return layers[k];
-	}
-	@:arrayAccess function arrayWrite(k:Int, v:Layer):Layer {
-		layers[k] = v;
-		return v;
-	}
-
 	public function new(layerSizes:Array<Int>) {
 		givenLayerSizes = layerSizes;
 		layers = new Array<Layer>();
