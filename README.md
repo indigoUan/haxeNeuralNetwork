@@ -1,3 +1,4 @@
+# This is outdated! I will rewrite this soon! 
 # How to use Network
 ## Creating a blank Network
 Once you include the library in your project, you can create a new network with
