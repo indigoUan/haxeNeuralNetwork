@@ -78,7 +78,7 @@ class NeuralNetwork {
 	}
 
 	public function clone():NeuralNetwork {
-		return NeuralNetwork.fromJSON(toJSON());
+		return NeuralNetwork.deserialize(serialize());
 	}
 
 	public function serialize():Bytes {
@@ -97,7 +97,7 @@ class NeuralNetwork {
 				bytes.addByte(layer.neurons[0].weights.length);
 
 				for (neuron in layer.neurons) {
-					var func = ActivationFunctionUtil.toInt(neuron.activationFunction);
+					var func = ActivationFunctionUtil.serialize(neuron.activationFunction);
 					bytes.addByte(func.method);
 					bytes.addFloat(func.argument);
 
@@ -123,7 +123,7 @@ class NeuralNetwork {
 		for (i in 0...layerCount) {
 			var neuronCount:Int = (input.get(pos++) << 4) + input.get(pos++);
 			var weightCount:Int = (input.get(pos++) << 12) + (input.get(pos++) << 8) + (input.get(pos++) << 4) + input.get(pos++);
-	
+
 			var neurons:Array<Neuron> = new Array<Neuron>();
 			for (j in 0...neuronCount) {
 				var activationFunctionID:Int = input.get(pos++);
@@ -142,7 +142,7 @@ class NeuralNetwork {
 				neurons.push({
 					weights: weights,
 					bias: bias,
-					activationFunction: ActivationFunctionUtil.fromInt(activationFunctionID, activationFunctionArgument)
+					activationFunction: ActivationFunctionUtil.deserialize(activationFunctionID, activationFunctionArgument)
 				});
 			}
 

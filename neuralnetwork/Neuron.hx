@@ -11,7 +11,7 @@ enum ActivationFunction {
 }
 
 class ActivationFunctionUtil {
-	public static function fromInt(method:Int, argument:Float):ActivationFunction {
+	public static function deserialize(method:Int, argument:Float):ActivationFunction {
 		return switch (method) {
 			default: Linear;
 			case 1: ReLU(argument);
@@ -23,7 +23,7 @@ class ActivationFunctionUtil {
 		}
 	}
 
-	public static function toInt(af:ActivationFunction):{ method:Int, argument:Float } {
+	public static function serialize(af:ActivationFunction):{ method:Int, argument:Float } {
 		return switch (af) {
 			case Linear:				{ method: 0, argument: 0 }
 			case ReLU(minimum):			{ method: 1, argument: minimum }
