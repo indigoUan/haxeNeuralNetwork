@@ -1,19 +1,20 @@
 package;
 
 import sys.io.File;
-import haxe.io.Bytes;
 import neuralnetwork.NeuralNetwork;
 
 class Test {
 	public static function main():Void {
-		var network:NeuralNetwork = new NeuralNetwork([2, 3, 3, 1]);
-		var bytes:Bytes = network.serialize();
-		var loden:NeuralNetwork = NeuralNetwork.deserialize(bytes);
+		var og:NeuralNetwork = new NeuralNetwork([100, 80, 80, 80, 1]);
+		var clone1:NeuralNetwork = og.clone();
+		var clone2:NeuralNetwork = clone1.clone();
+		var clone3:NeuralNetwork = clone2.clone();
+		var clone4:NeuralNetwork = clone3.clone();
 
-		File.saveBytes("original.nnw", bytes);
-		File.saveBytes("clone.nnw", loden.serialize());
-
-		File.saveContent("original.json", network.toJSON());
-		File.saveContent("clone.json", loden.toJSON());
+		File.saveContent("parent.json", og.toJSON(true));
+		File.saveContent("clone1.json", clone1.toJSON(true));
+		File.saveContent("clone2.json", clone2.toJSON(true));
+		File.saveContent("clone3.json", clone3.toJSON(true));
+		File.saveContent("clone4.json", clone4.toJSON(true));
 	}
 }

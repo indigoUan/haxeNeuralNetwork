@@ -37,7 +37,7 @@ class ActivationFunctionUtil {
 }
 
 typedef Neuron = {
-	weights:Array<Float>,
 	bias:Float,
+	weights:Array<Float>,
 	activationFunction:ActivationFunction
 }

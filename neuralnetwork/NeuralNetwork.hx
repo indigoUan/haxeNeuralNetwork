@@ -85,23 +85,20 @@ class NeuralNetwork {
 		var bytes:BytesBuffer = new BytesBuffer();
 
 		bytes.addByte(OutputActivationFunctionUtil.toInt(outputActivationFunction));
-		bytes.addInt32(layers.length);
+		bytes.addByte(layers.length);
 
 		for (layer in layers) {
-			bytes.addByte(layer.neurons.length >> 8);
 			bytes.addByte(layer.neurons.length);
-			if (layer.neurons.length > 0) {
-				bytes.addInt32(layer.neurons[0].weights.length);
+			for (neuron in layer.neurons) {
+				bytes.addByte(neuron.weights.length);
 
-				for (neuron in layer.neurons) {
-					var func = ActivationFunctionUtil.serialize(neuron.activationFunction);
-					bytes.addByte(func.method);
-					bytes.addFloat(func.argument);
+				var func = ActivationFunctionUtil.serialize(neuron.activationFunction);
+				bytes.addByte(func.method);
+				bytes.addDouble(func.argument);
 
-					bytes.addDouble(neuron.bias);
-					for (weight in neuron.weights) {
-						bytes.addDouble(weight);
-					}
+				bytes.addDouble(neuron.bias);
+				for (weight in neuron.weights) {
+					bytes.addDouble(weight);
 				}
 			}
 		}
@@ -111,49 +108,50 @@ class NeuralNetwork {
 
 	public static function deserialize(input:Bytes):NeuralNetwork {
 		var pos:Int = 0;
-		var outputActivationFunction:OutputActivationFunction = OutputActivationFunctionUtil.fromInt(input.get(pos++));
-		var layerCount:Int = input.getInt32(pos);
-		pos += 4;
+		var network:NeuralNetwork = new NeuralNetwork([]);
+
+		network.outputActivationFunction = OutputActivationFunctionUtil.fromInt(input.get(pos));
+		pos++;
+
+		final layerCount:Int = input.get(pos);
+		pos++;
 
 		var inputSize:Int = -1;
-		var layers:Array<Layer> = new Array<Layer>();
 		for (i in 0...layerCount) {
-			var neuronCount:Int = (input.get(pos++) << 4) + input.get(pos++);
-			var weightCount:Int = (input.get(pos++) << 12) + (input.get(pos++) << 8) + (input.get(pos++) << 4) + input.get(pos++);
+			var neuronCount:Int = input.get(pos);
+			pos++;
+			var layer:Layer = new Layer(inputSize == -1? neuronCount : inputSize, 0);
 
-			var neurons:Array<Neuron> = new Array<Neuron>();
 			for (j in 0...neuronCount) {
-				var activationFunctionID:Int = input.get(pos++);
-				var activationFunctionArgument:Float = input.getFloat(pos);
-				pos += 4;
+				var weights:Array<Float> = new Array<Float>();
+				var weightCount:Int = input.get(pos);
+				pos++;
+
+				var method:Int = input.get(pos);
+				pos++;
+				var argument:Float = input.getFloat(pos);
+				pos += 8;
+				var activationFunction:ActivationFunction = ActivationFunctionUtil.deserialize(method, argument);
 
 				var bias:Float = input.getDouble(pos);
 				pos += 8;
 
-				var weights:Array<Float> = new Array<Float>();
 				for (k in 0...weightCount) {
 					weights.push(input.getDouble(pos));
 					pos += 8;
 				}
 
-				neurons.push({
-					weights: weights,
+				layer.neurons.push({
 					bias: bias,
-					activationFunction: ActivationFunctionUtil.deserialize(activationFunctionID, activationFunctionArgument)
+					weights: weights,
+					activationFunction: activationFunction
 				});
 			}
 
-			var layer:Layer = new Layer(inputSize == -1? neuronCount : inputSize, neuronCount);
-			layer.neurons = neurons;
-
+			network.layers.push(layer);
 			inputSize = neuronCount;
-			layers.push(layer);
 		}
-	
-		var network:NeuralNetwork = new NeuralNetwork([]);
-		network.outputActivationFunction = outputActivationFunction;
-		network.layers = layers;
-	
+
 		return network;
 	}
 
