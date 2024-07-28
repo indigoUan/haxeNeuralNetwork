@@ -88,13 +88,10 @@ class NeuralNetwork {
 		bytes.addInt32(layers.length);
 
 		for (layer in layers) {
-			bytes.addByte(layer.neurons.length >> 4);
+			bytes.addByte(layer.neurons.length >> 8);
 			bytes.addByte(layer.neurons.length);
 			if (layer.neurons.length > 0) {
-				bytes.addByte(layer.neurons[0].weights.length >> 12);
-				bytes.addByte(layer.neurons[0].weights.length >> 8);
-				bytes.addByte(layer.neurons[0].weights.length >> 4);
-				bytes.addByte(layer.neurons[0].weights.length);
+				bytes.addInt32(layer.neurons[0].weights.length);
 
 				for (neuron in layer.neurons) {
 					var func = ActivationFunctionUtil.serialize(neuron.activationFunction);
