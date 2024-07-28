@@ -1,26 +1,13 @@
 package neuralnetwork;
 
-typedef NeuralNetworkGraphical = {
-	lines:Array<{
-		x1:Float,
-		y1:Float,
-		x2:Float,
-		y2:Float,
-		value:Float
-	}>,
-	dots:Array<{
-		x:Float,
-		y:Float,
-		value:Float
-	}>
-}
+import haxe.Json;
 
 enum OutputActivationFunction {
 	Linear;
 	Softmax;
 }
 
-private class NeuralNetworkInstance {
+class NeuralNetwork {
 	public var outputActivationFunction:OutputActivationFunction = Linear;
 	public var layers:Array<Layer>;
 	private var givenLayerSizes:Array<Int> = new Array();
@@ -29,17 +16,19 @@ private class NeuralNetworkInstance {
 		givenLayerSizes = layerSizes;
 		layers = new Array<Layer>();
 		if (layerSizes.length > 0) {
+			layers.push(new Layer(layerSizes[0], layerSizes[0]));
 			for (i in 1...layerSizes.length) {
 				layers.push(new Layer(layerSizes[i-1], layerSizes[i]));
 			}
 		}
 	}
 
-	public function forward(input:Array<Float>):Array<Float> {
+	public function process(input:Array<Float>):Array<Float> {
 		var output:Array<Float> = input;
 		for (layer in layers) {
 			output = layer.forward(output);
 		}
+
 		switch (outputActivationFunction) {
 			case Linear: {
 				return output;
@@ -64,56 +53,34 @@ private class NeuralNetworkInstance {
 				return normalValues;
 			}
 		}
+		return output;
 	}
 
-	public function graphicalMapping():NeuralNetworkGraphical {
-		var res:NeuralNetworkGraphical = {
-			lines: new Array(),
-			dots: new Array()
-		};
+	public function clone():NeuralNetwork {
+		return NeuralNetwork.fromJSON(toJSON());
+	}
 
-		var widthSpace:Float = 1 / layers.length;
-		var prevX:Float = 0;
-		var prevYs:Array<Float> = [];
-		var bufferYs:Array<Float> = [];
-		for (layer in 0...layers.length) {
-			var heightSpace:Float = 1 / layers[layer].length;
-			var x:Float = widthSpace * layer;
-			for (neuron in 0...layers[layer].length) {
-				var y:Float = heightSpace * neuron;
-				bufferYs.push(y);
-
-				for (Y in 0...prevYs.length) {
-					res.lines.push({ x1: prevX, y1: prevYs[Y], x2: x, y2: y, value: layers[layer][neuron].weights[Y] });
-				}
-				res.dots.push({ x: x, y: y, value: layers[layer][neuron].bias });
-			}
-			prevX = x;
-			prevYs = bufferYs.copy();
+	public function toJSON(pretty:Bool = false):String {
+		var Ls:Array<Dynamic> = new Array<Dynamic>();
+		for (layer in layers) {
+			Ls.push(layer.neurons);
 		}
-
-		return res;
-	}
-}
-
-@:forward
-@:access(neuralnetwork.NeuralNetwork.NeuralNetworkInstance)
-abstract NeuralNetwork(NeuralNetworkInstance) from NeuralNetworkInstance {
-	public function new(layerSizes:Array<Int>):NeuralNetworkInstance {
-		this = new NeuralNetworkInstance(layerSizes);
+		return Json.stringify(Ls, pretty? "\t" : null);
 	}
 
-	public var length(get, never):Int;
-	private function get_length():Int {
-		return this.layers.length;
-	}
-
-	@:arrayAccess public inline function get(id:Int) {
-	  return this.layers[id];
-	}
-
-	@:arrayAccess public inline function set(id:Int, layer:Layer) {
-		this.layers[id] = layer;
-		return layer;
+	public static function fromJSON(json:String):NeuralNetwork {
+		var layers:Array<Dynamic> = Json.parse(json);
+		if (layers.length > 0) {
+			var sizes:Array<Int> = new Array<Int>();
+			for (layer in layers) {
+				sizes.push(layer.length);
+			}
+			var network:NeuralNetwork = new NeuralNetwork(sizes);
+			for (i in 0...layers.length) {
+				network.layers[i].neurons = layers[i];
+			}
+			return network;
+		}
+		return new NeuralNetwork([]);
 	}
 }
