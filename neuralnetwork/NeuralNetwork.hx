@@ -88,7 +88,7 @@ class NeuralNetwork {
 		bytes.addByte(layers.length);
 
 		for (layer in layers) {
-			bytes.addByte(layer.neurons.length);
+			bytes.addInt32(layer.neurons.length);
 			for (neuron in layer.neurons) {
 				bytes.addByte(neuron.weights.length);
 
@@ -118,8 +118,8 @@ class NeuralNetwork {
 
 		var inputSize:Int = -1;
 		for (i in 0...layerCount) {
-			var neuronCount:Int = input.get(pos);
-			pos++;
+			var neuronCount:Int = input.getInt32(pos);
+			pos += 4;
 			var layer:Layer = new Layer(inputSize == -1? neuronCount : inputSize, 0);
 
 			for (j in 0...neuronCount) {

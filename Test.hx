@@ -11,10 +11,10 @@ class Test {
 		var clone3:NeuralNetwork = clone2.clone();
 		var clone4:NeuralNetwork = clone3.clone();
 
-		File.saveContent("parent.json", og.toJSON(true));
-		File.saveContent("clone1.json", clone1.toJSON(true));
-		File.saveContent("clone2.json", clone2.toJSON(true));
-		File.saveContent("clone3.json", clone3.toJSON(true));
-		File.saveContent("clone4.json", clone4.toJSON(true));
+		File.saveContent("parent.json", og.toJSON());
+		File.saveContent("clone1.json", clone1.toJSON());
+		File.saveContent("clone2.json", clone2.toJSON());
+		File.saveContent("clone3.json", clone3.toJSON());
+		File.saveContent("clone4.json", clone4.toJSON());
 	}
 }

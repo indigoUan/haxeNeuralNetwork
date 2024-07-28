@@ -5,7 +5,7 @@ class Layer {
 
 	public function new(inputSize:Int, neuronCount:Int) {
 		neurons = new Array<Neuron>();
-		if (neuronCount > 255) {
+		if (neuronCount > 4294967295) {
 			throw "Too many neurons in one layer";
 		}
 		for (i in 0...neuronCount) {
